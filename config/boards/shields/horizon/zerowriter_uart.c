@@ -162,12 +162,12 @@ static int zw_keycode_listener(const zmk_event_t *eh) {
                 down = ZW_MOD_META_DOWN;  up = ZW_MOD_META_UP;  break;
             default: return ZMK_EV_EVENT_BUBBLE;
         }
-        zw_send(ev->pressed ? down : up);
+        zw_send(ev->state ? down : up);
         return ZMK_EV_EVENT_BUBBLE;
     }
 
     /* Regular keys: send index byte on press only (no release byte) */
-    if (ev->pressed) {
+    if (ev->state) {
         uint8_t zw_byte = hid_to_zw(kc);
         if (zw_byte != ZW_NO_KEY) {
             zw_send(zw_byte);
