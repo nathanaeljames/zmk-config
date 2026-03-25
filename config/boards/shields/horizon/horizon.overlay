@@ -61,13 +61,30 @@
  * nice!nano that are outside the Pro Micro footprint and therefore
  * electrically isolated from the Horizon key matrix.
  *
- * P1.01 → wire to Inkplate GPIO 13 (RX)
+ * P1.01 → wire to Inkplate RXD pin on ESP32 header
  * P1.02 → no connection needed (declared to satisfy the UART driver)
  *
- * NOTE: This config intentionally replaces the studio-rpc-usb-uart UART
- * transport. ZMK Studio is disabled for this build (see build.yaml).
- * BLE remains active for connecting to other devices.
+ * The board-level nice!nano overlay defines uart0_default with a group2
+ * containing P0.06 (pro_micro 1, top row scan pin). Zephyr merges overlay
+ * nodes rather than replacing them, so without the /delete-node/ directives
+ * below, P0.06 would be claimed by both uart0 and the key matrix, breaking
+ * the entire top row of keys. The deletes must appear before the &pinctrl
+ * block that re-declares the groups.
+ *
+ * NOTE: studio-rpc-usb-uart snippet removed (see build.yaml) — uart0 is
+ * repurposed for ZeroWriter output. BLE disabled (see horizon.conf).
  */
+
+/* Remove board-default groups that bleed P0.06 into our uart0 pinctrl */
+&uart0_default {
+    /delete-node/ group1;
+    /delete-node/ group2;
+};
+
+&uart0_sleep {
+    /delete-node/ group1;
+};
+
 &pinctrl {
     uart0_default: uart0_default {
         group1 {
