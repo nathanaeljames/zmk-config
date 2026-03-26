@@ -75,7 +75,12 @@
  * repurposed for ZeroWriter output. BLE disabled (see horizon.conf).
  */
 
-/* Remove board-default groups that bleed P0.06 into our uart0 pinctrl */
+/* Remove board-default groups that bleed P0.06 (TX) and P0.08 (RX) into our
+ * uart0 pinctrl. uart0_default uses two groups; uart0_sleep also uses two
+ * groups. Both must be fully cleared before we re-declare with P1.01/P1.02.
+ * Failing to delete group2 from uart0_sleep leaves P0.08 (pro_micro 0, the
+ * row-1 scan pin) claimed by UART during sleep, breaking the entire home row
+ * whenever uart0 suspends between keystrokes. */
 &uart0_default {
     /delete-node/ group1;
     /delete-node/ group2;
@@ -83,6 +88,7 @@
 
 &uart0_sleep {
     /delete-node/ group1;
+    /delete-node/ group2;
 };
 
 &pinctrl {
