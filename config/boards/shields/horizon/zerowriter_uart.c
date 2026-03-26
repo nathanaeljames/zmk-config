@@ -120,7 +120,7 @@ static uint8_t hid_to_zw(uint32_t kc) {
         case 0x37: return 50;  /* . > */
         case 0x38: return 51;  /* / ? */
         /* index 52 (RShift), 53 (Ctrl), 55 (Alt), 56 (Meta) are modifiers */
-        case 0x2C: return 54;  /* Space */
+        case 0x2C: return 56;  /* Space — index 56 per keymap.json (not 54) */
         /* Arrow keys */
         case 0x50: return 57;  /* Left */
         case 0x52: return 58;  /* Up */
